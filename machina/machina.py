@@ -19,7 +19,7 @@ class Machina:
         context (list): The context of the conversation, including user queries and model responses.
     """
 
-    def __init__(self, api_key: str, model: str, prompt: str = None, tools: list[Tool] = []):
+    def __init__(self, api_key: str, model: str, prompt: str = None, tools: list[Tool] = [], name: str = None):
         """
         Initializes the AskGemini object with the specified API key, model, and tools.
 
@@ -44,6 +44,7 @@ class Machina:
         self.context.append(
             types.Content(role="model", parts=[types.Part.from_text(text=self.system_prompt)]),
         )
+        self.name = name or "machina"
 
     def ask(self, query: str):
         """

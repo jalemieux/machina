@@ -40,40 +40,66 @@
 #     print("### the improved prompt is: ", ret.parts[0].text)
 
 from dotenv import load_dotenv
+
+from machina.machina_catalog_manager import MachinaCatalogManager
+
 load_dotenv("development.config.env")
 from machina import Machina, WebSearchTool, WebCrawlerTool, PolygonApiTool
 import os 
+import json
+from database import initialize_database, insert_machina_instance  # Import the database functions
 
 web_search_tool = WebSearchTool(api_key=os.getenv("TAVILY_API_KEY"))
 polygon_api_tool = PolygonApiTool(api_key=os.getenv("POLYGON_API_KEY"))
 web_crawler_tool = WebCrawlerTool()
 
+# bob_handle = Machina(api_key=os.getenv("GEMINI_API_KEY"), model="gemini-1.5-flash", name="bob_the_anchor",
+#                      tools=[web_search_tool, web_crawler_tool], 
+#                      prompt="""
+#                      You are a news agent that reasearches news of a given topic.
+#                      """,
+#                      )
 
-question_to_machinas = """
-Based on the initial prompt and the tools available to you, please provide a detailed response covering the following points:
-	1.	Purpose:
-	•	What is your overall purpose as a language model?
-	•	What are the primary goals you are designed to achieve?
-	2.	Capabilities:
-	•	What tasks or operations can you perform using the available tools?
-	•	How can these tools assist in executing your functions?
-	•	Please give examples if applicable.
-	3.	Limitations:
-	•	What actions or tasks are outside your scope or beyond what you are allowed to do?
-	•	Are there any specific constraints or rules that restrict your functionality?
+# jim_handle = Machina(api_key=os.getenv("GEMINI_API_KEY"), model="gemini-1.5-flash", name="jim_the_analyst",
+#                      tools=[polygon_api_tool],
+#                      prompt="""
+#                      You are a financial analyst that analyzes the financial data of a given company.
+#                      """,
+#                      )
 
-	Provide your explanation in a clear and structured manner.
-    """
-    
-agent = Machina(api_key=os.getenv("GEMINI_API_KEY"), model="gemini-1.5-flash",
-                          prompt="""
-                          You are a news agent that reasearches news of a given topic.
-                          You will be given a topic and you will fetch the latest news on that topic, analyze it, and provide a summary of the key points.
-                          Your output should be easy to read,should be in markdown format.
-                          """,
-                          tools=[web_search_tool])
+cataloger = MachinaCatalogManager()
+catalog = cataloger.catalog_machinas([bob_handle, jim_handle])
 
-ret = agent.ask(question_to_machinas)
-print(ret.parts[0].text)
+#cataloger = MachinaCatalogManager()
+#catalog = cataloger.get_all_machinas()
+
+print(catalog)
 
 
+# catalog = catalog_machinas([bob_handle, jim_handle])
+
+# with open("catalog.json", "w") as f:
+#     json.dump(catalog, f)
+# Load catalog from file
+# with open("catalog.json", "r") as f:
+#     catalog = json.load(f)
+
+# print("Catalog has been saved to catalog.json")
+
+# # Initialize the database
+# initialize_database()
+
+# # Insert Machina instances into the database
+# insert_machina_instance(
+#     name="bob_the_anchor",
+#     tools=str([tool.__class__.__name__ for tool in bob_handle.tools]),
+#     prompt=bob_handle.system_prompt,
+#     catalog_description=catalog.get("bob_the_anchor", "")
+# )
+
+# insert_machina_instance(
+#     name="jim_the_analyst",
+#     tools=str([tool.__class__.__name__ for tool in jim_handle.tools]),
+#     prompt=jim_handle.system_prompt,
+#     catalog_description=catalog.get("jim_the_analyst", "")
+# )

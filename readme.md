@@ -13,3 +13,24 @@ A Machina instance is initialized with:
 For example, if you want an agent that fetches and summarizes news on a given topic, the prompt should describe this goal, and the agent should be equipped with a tool that retrieves news articles from the web. See news-agent.py for an example.
 
 This project is designed to be flexible, allowing the agent to evolve and incorporate new capabilities over time.
+
+
+# What is Next 
+
+- [ ] Make LLM used swapable
+- [ ] utility to convert function to Tool
+
+
+create an agent that improves a prompt
+
+store prompt in db for agent 
+
+
+
+catalog all agents, with what they good for 
+during agent exectuion givem access to all agent as tools 
+a request starts with an init agent who routes request based on what agents can do 
+
+
+
+
